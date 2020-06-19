@@ -9,19 +9,22 @@ function App() {
 
   useEffect(() => {
     api.get('repositories').then(result => setRepositories(result.data));
-  })
+  }, []);
   async function handleAddRepository() {
-    api.post('repositories', {
+    const {data} = await api.post('repositories', {
       title: `Novo repositório ${Date.now()}`,
       url: 'http://github.com/novoprojeto',
       techs: [
         'eefaf', 'sgsefefse'
       ]
-    }).then((newRepository) => setRepositories([...repositories, newRepository]));
+    });
+    setRepositories([...repositories, data]);
   }
 
   async function handleRemoveRepository(id) {
-    api.delete(`repositories/${id}`);
+    await api.delete(`repositories/${id}`);
+    const newList = repositories.filter(repository => repository.id != id);
+    setRepositories(newList);
   }
 
   return (
